@@ -29,7 +29,7 @@ def main():
     lam=0.2
     #criterion = nn.MSELoss(size_average=False)#
     criterion = custom_loss(lam,size_average=False) #Note : for the time being, the custom loss computes the MSE and average by the total number of non NAN samples in the batch, there is no distinction of the number of non NAN samples per series.
-    epochs_num=20
+    epochs_num=50
 
     dataloader = DataLoader(train_dataset, batch_size=10,shuffle=True)
 
