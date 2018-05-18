@@ -21,7 +21,7 @@ def main():
 
     #Set random seed
     np.random.seed(2)
-    train_dataset=LabTestsDataset(input_dim=input_dim,csv_file_serie="lab_events_short.csv",csv_file_tag="death_tags.csv",file_path="~/Documents/Data/Full_MIMIC/")
+    train_dataset=LabTestsDataset(input_dim=input_dim,csv_file_serie="dummy_data.csv",csv_file_tag="dummy_death_tags.csv",file_path="./")
     #With Adam optimizer
     seq=Sequence(input_dim=input_dim)
     seq.double()
