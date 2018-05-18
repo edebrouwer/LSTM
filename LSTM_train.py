@@ -17,7 +17,7 @@ def main():
     for arg in sys.argv[1:]:
         print(arg)
 
-    input_dim=29
+    input_dim=2
 
     #Set random seed
     np.random.seed(2)

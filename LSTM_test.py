@@ -21,14 +21,14 @@ def main():
     print("AUC on test set: "+str(testAUC_model(seq)))
 
 def load_current_model(): #Function to load the saved model.
-    mod=Sequence(input_dim=29)
+    mod=Sequence(input_dim=2)
     mod.double()
     mod.load_state_dict(torch.load("current_model.pt"))
     return(mod)
 
 
 def testAUC_model(mod):
-    test_dataset=LabTestsDataset(input_dim=29,csv_file_serie="dummy_data_test.csv",csv_file_tag="dummy_death_tags_test.csv",file_path="./")
+    test_dataset=LabTestsDataset(input_dim=2,csv_file_serie="dummy_data_test.csv",csv_file_tag="dummy_death_tags_test.csv",file_path="./")
     dataloader_test = DataLoader(test_dataset,shuffle=True)
 
     true_labs=np.zeros(len(test_dataset))
