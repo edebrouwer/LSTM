@@ -29,7 +29,7 @@ def fun_custom(hadm_num,death_tag):
     a["LABEL_CODE"]=a.index
     return(a)
 
-for idx in range(int(length/num_workers)):#range(length):
+for idx in range((int(length/num_workers)-1)):#range(length):
     print(idx/int(length/num_workers))
     idxs=list(range(num_workers*idx,num_workers*(idx+1))) # Attention last batch !
     hadm_nums=[death_tags.iloc[idh]["HADM_ID"] for idh in idxs ]
@@ -48,4 +48,12 @@ for idx in range(int(length/num_workers)):#range(length):
 
     df_final.reset_index()
 
+df_final.to_csv("df_final.csv")
+
+for id2 in range((int(length/num_workers)*num_workers),length):#range(length):
+    hadm_num=death_tags.iloc[id2]["HADM_ID"]
+    dtag=int(death_tags.iloc[id2]["DEATHTAG"])
+    result=fun_custom(hadm_num,dtag)
+    df_final=pd.concat([df_final,result])
+    df_final.reset_index()
 df_final.to_csv("df_final.csv")
