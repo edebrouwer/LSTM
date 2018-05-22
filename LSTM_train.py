@@ -8,7 +8,7 @@ from torch.utils.data import Dataset, DataLoader
 from custom_funs import custom_loss
 from torch.autograd import Variable
 
-from LSTM_model import Sequence, LabTestsDataset
+from LSTM_model import Sequence, LabTrainDataset
 
 import sys
 
