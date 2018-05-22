@@ -1,4 +1,6 @@
 #We need to preprocess the input so that later computations are made easier. THIS IS THE ACTUAL PREPROC FUNCTION
+import pandas as pd
+
 input_dim=29
 csv_file_serie="lab_events_short.csv"
 csv_file_tag="death_tags.csv"
