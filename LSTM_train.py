@@ -31,10 +31,10 @@ def main():
     optimizer=torch.optim.Adam(seq.parameters(), lr=0.001)
     lam=0.2
     #criterion = nn.MSELoss(size_average=False)#
-    criterion = custom_loss(lam,size_average=False) #Note : for the time being, the custom loss computes the MSE and average by the total number of non NAN samples in the batch, there is no distinction of the number of non NAN samples per series.
+    criterion = custom_loss(lam,size_average=True) #Note : for the time being, the custom loss computes the MSE and average by the total number of non NAN samples in the batch, there is no distinction of the number of non NAN samples per series.
     epochs_num=50
 
-    dataloader = DataLoader(train_dataset, batch_size=150,shuffle=True,num_workers=20)
+    dataloader = DataLoader(train_dataset, batch_size=500,shuffle=True,num_workers=20)
 
     train_loss_vec=[]
     try:
@@ -43,9 +43,8 @@ def main():
             print("EPOCH NUMBER "+str(i))
             startTime = time.time()
             for i_batch, sample_batched in enumerate(dataloader): #Enumerate over the different batches in the dataset
-                print(i_batch)
-                print(time.time()-startTime)
-                startTime=time.time()
+                #print(i_batch)
+                #print(time.time()-startTime)
                 batch_length=sample_batched[1].size(0)
                 optimizer.zero_grad()
 
@@ -54,15 +53,15 @@ def main():
                 out = seq.fwd_test(data_in)
                 mask= (data_ref == data_ref)
 
-                print(time.time()-startTime)
-                startTime=time.time()
                 #Compute Loss, backpropagate and update the weights.
                 loss = criterion(data_ref[mask],out[0][:,:][mask],sample_batched[1].unsqueeze(1).double().cuda(),out[1])
+                print(loss)
                 loss.backward()
                 optimizer.step()
 
                 mean_loss+=loss
             print("Loss : "+str(mean_loss/i_batch))
+            print(time.time()-startTime)
             train_loss_vec.append(mean_loss.item()/i_batch)
     except KeyboardInterrupt:
         torch.save(seq.state_dict(),"current_model.pt")

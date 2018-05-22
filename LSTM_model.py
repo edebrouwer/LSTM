@@ -79,7 +79,7 @@ class LabTrainDataset(Dataset):
     def __init__(self,csv_file_serie="lab_short_pre_proc.csv",file_path="~/Data/MIMIC/",transform=None):
         self.lab_short=pd.read_csv(file_path+csv_file_serie)
         self.length=self.lab_short["HADM_ID"].nunique()
-        self.input_dim=input_dim
+        #self.input_dim=input_dim
     def __len__(self):
         return self.length
     def __getitem__(self,idx):
