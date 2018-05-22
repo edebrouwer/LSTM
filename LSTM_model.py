@@ -75,8 +75,18 @@ class Sequence(nn.Module):
         #print(outputs.size())
         return [outputs,lab]
 
+class LabTrainDataset(Dataset):
+    def __init__(self,csv_file_serie="lab_short_pre_proc.csv",file_path="~/Data/MIMIC/",transform=None):
+        self.lab_short=pd.read_csv(file_path+csv_file_serie)
+        self.length=self.lab_short["HADM_ID"].nunique()
+        self.input_dim=input_dim
+    def __len__(self):
+        return self.length
+    def __getitem__(self,idx):
+        return([torch.from_numpy(self.lab_short.loc[self.lab_short["UNIQUE_ID"]==idx].as_matrix()[:,1:102]),int(self.lab_short.loc[self.lab_short["UNIQUE_ID"]==idx].as_matrix()[0,103])])
+
 class LabTestsDataset(Dataset):
-    def __init__(self,input_dim=29,csv_file_serie="lab_events_short.csv",csv_file_tag="death_tags.csv",file_path="~/Documents/Data/Full_MIMIC/",transform=None):
+    def __init__(self,input_dim=30,csv_file_serie="lab_events_short.csv",csv_file_tag="death_tags.csv",file_path="~/Documents/Data/Full_MIMIC/",transform=None):
         self.lab_short=pd.read_csv(file_path+csv_file_serie)
         self.death_tags=pd.read_csv(file_path+csv_file_tag)
         self.length=len(self.death_tags.index)

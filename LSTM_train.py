@@ -19,11 +19,11 @@ def main():
     for arg in sys.argv[1:]:
         print(arg)
 
-    input_dim=29
+    input_dim=30
 
     #Set random seed
     np.random.seed(2)
-    train_dataset=LabTestsDataset(input_dim=input_dim,csv_file_serie="lab_events_short.csv",csv_file_tag="death_tags.csv",file_path="~/Data/MIMIC/")
+    train_dataset=LabTrainDataset()
     #With Adam optimizer
     seq=Sequence(input_dim=input_dim)
     seq.double()
@@ -53,7 +53,7 @@ def main():
                 data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False).cuda()
                 out = seq.fwd_test(data_in)
                 mask= (data_ref == data_ref)
-                
+
                 print(time.time()-startTime)
                 startTime=time.time()
                 #Compute Loss, backpropagate and update the weights.
