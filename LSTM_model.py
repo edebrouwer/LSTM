@@ -18,6 +18,7 @@ class Sequence(nn.Module):
         self.input_dim=input_dim
         self.lstm1 = nn.LSTMCell(input_dim, 51)
         self.lstm2 = nn.LSTMCell(51, 51)
+        self.lstmid = nn.LSTMCell(51, 51)
         self.linear = nn.Linear(51, input_dim)
         self.linear_out = nn.Linear(51,1)
 
@@ -32,6 +33,8 @@ class Sequence(nn.Module):
         c_t = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
         h_t2 = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
         c_t2 = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
+        h_tid = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
+        c_tid = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
 
         #For initialization. Should be modified to set output=0 in a more simple way.
         #h_t, c_t = self.lstm1(data_in[:,0].unsqueeze(1), (h_t, c_t))
@@ -55,7 +58,8 @@ class Sequence(nn.Module):
             #print("C type is "+str(c_t.type()))
             #h_t, c_t = self.lstm1(input_t.unsqueeze(0), (h_t, c_t))
             h_t, c_t = self.lstm1(input_t, (h_t, c_t))
-            h_t2, c_t2 = self.lstm2(h_t, (h_t2, c_t2))
+            h_tid, c_tid = self.lstmid(h_t, (h_tid, c_tid))
+            h_t2, c_t2 = self.lstm2(h_tid, (h_t2, c_t2))
 
             #print(output)
             output = self.linear(h_t2)
@@ -66,7 +70,8 @@ class Sequence(nn.Module):
 
         for i in range(future):# if we should predict the future
             h_t, c_t = self.lstm1(output, (h_t, c_t))
-            h_t2, c_t2 = self.lstm2(h_t, (h_t2, c_t2))
+            h_tid, c_tid = self.lstmid(h_t, (h_tid, c_tid))
+            h_t2, c_t2 = self.lstm2(h_tid, (h_t2, c_t2))
             output = self.linear(h_t2)
             outputs += [output]
 

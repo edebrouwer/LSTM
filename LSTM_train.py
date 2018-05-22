@@ -29,7 +29,7 @@ def main():
     seq=Sequence(input_dim=input_dim)
     seq.double()
     seq.cuda()
-    optimizer=torch.optim.Adam(seq.parameters(), lr=0.001)
+    optimizer=torch.optim.Adam(seq.parameters(), lr=0.005)
     lam=0.2
     #criterion = nn.MSELoss(size_average=False)#
     criterion = custom_loss(lam,size_average=True) #Note : for the time being, the custom loss computes the MSE and average by the total number of non NAN samples in the batch, there is no distinction of the number of non NAN samples per series.
