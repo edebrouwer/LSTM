@@ -83,7 +83,7 @@ class LabTrainDataset(Dataset):
     def __len__(self):
         return self.length
     def __getitem__(self,idx):
-        return([torch.from_numpy(self.lab_short.loc[self.lab_short["UNIQUE_ID"]==idx].as_matrix()[:,1:102]),int(self.lab_short.loc[self.lab_short["UNIQUE_ID"]==idx].as_matrix()[0,103])])
+        return([torch.from_numpy(self.lab_short.loc[self.lab_short["UNIQUE_ID"]==idx].as_matrix()[:,2:103]),int(self.lab_short.loc[self.lab_short["UNIQUE_ID"]==idx].as_matrix()[0,104])])
 
 class LabTestsDataset(Dataset):
     def __init__(self,input_dim=30,csv_file_serie="lab_events_short.csv",csv_file_tag="death_tags.csv",file_path="~/Documents/Data/Full_MIMIC/",transform=None):
