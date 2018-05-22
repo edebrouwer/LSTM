@@ -29,8 +29,8 @@ def load_current_model(): #Function to load the saved model.
 
 
 def testAUC_model(mod):
-    test_dataset=LabTestsDataset(input_dim=2,csv_file_serie="dummy_data_test.csv",csv_file_tag="dummy_death_tags_test.csv",file_path="./")
-    dataloader_test = DataLoader(test_dataset,shuffle=True)
+    test_dataset=LabTrainDataset(csv_file_serie="lab_short_pre_proc_test.csv")
+    dataloader_test = DataLoader(test_dataset,batch_size=len(test_dataset),shuffle=True)
 
     true_labs=np.zeros(len(test_dataset))
     inferred_labs=np.zeros(len(test_dataset))
