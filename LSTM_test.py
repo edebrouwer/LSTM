@@ -19,6 +19,7 @@ def main():
         print(arg)
     seq=load_current_model()
     print("AUC on test set: "+str(testAUC_model(seq)))
+    long_model(seq)
 
 def load_current_model(): #Function to load the saved model.
     mod=Sequence(input_dim=30)
@@ -26,6 +27,20 @@ def load_current_model(): #Function to load the saved model.
     mod.cuda()
     mod.load_state_dict(torch.load("current_model.pt"))
     return(mod)
+
+def long_model(mod,idx=0):
+    test_dataset=LabTrainDataset(csv_file_serie="lab_short_pre_proc_test.csv")
+    dataloader_test = DataLoader(test_dataset,batch_size=len(test_dataset),shuffle=True)
+
+    print(len(test_dataset))
+    true_labs=np.zeros(len(test_dataset))
+    inferred_labs=np.zeros(len(test_dataset))
+    for i_batch, sample_batched in enumerate(dataloader_test): #Enumerate over the different batches in the dataset
+        data_in=Variable(sample_batched[0][:,:,:-1],requires_grad=False).cuda()
+        data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False).cuda()
+        out = mod.fwd_test(data_in)
+    print(data_ref.shape)
+
 
 
 def testAUC_model(mod):
