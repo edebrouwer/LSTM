@@ -23,6 +23,7 @@ def main():
 def load_current_model(): #Function to load the saved model.
     mod=Sequence(input_dim=2)
     mod.double()
+    mod.cuda()
     mod.load_state_dict(torch.load("current_model.pt"))
     return(mod)
 
@@ -34,8 +35,8 @@ def testAUC_model(mod):
     true_labs=np.zeros(len(test_dataset))
     inferred_labs=np.zeros(len(test_dataset))
     for i_batch, sample_batched in enumerate(dataloader_test): #Enumerate over the different batches in the dataset
-        data_in=Variable(sample_batched[0][:,:,:-1],requires_grad=False)
-        data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False)
+        data_in=Variable(sample_batched[0][:,:,:-1],requires_grad=False).cuda()
+        data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False).cuda()
         out = mod.fwd_test(data_in)
         true_labs[i_batch]=sample_batched[1].item()
         inferred_labs[i_batch]=out[1].item()

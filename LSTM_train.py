@@ -12,43 +12,52 @@ from LSTM_model import Sequence, LabTestsDataset
 
 import sys
 
+import time
+
 def main():
     # print command line arguments
     for arg in sys.argv[1:]:
         print(arg)
 
-    input_dim=2
+    input_dim=29
 
     #Set random seed
     np.random.seed(2)
-    train_dataset=LabTestsDataset(input_dim=input_dim,csv_file_serie="dummy_data.csv",csv_file_tag="dummy_death_tags.csv",file_path="./")
+    train_dataset=LabTestsDataset(input_dim=input_dim,csv_file_serie="lab_events_short.csv",csv_file_tag="death_tags.csv",file_path="~/Data/MIMIC/")
     #With Adam optimizer
     seq=Sequence(input_dim=input_dim)
     seq.double()
+    seq.cuda()
     optimizer=torch.optim.Adam(seq.parameters(), lr=0.001)
     lam=0.2
     #criterion = nn.MSELoss(size_average=False)#
     criterion = custom_loss(lam,size_average=False) #Note : for the time being, the custom loss computes the MSE and average by the total number of non NAN samples in the batch, there is no distinction of the number of non NAN samples per series.
     epochs_num=50
 
-    dataloader = DataLoader(train_dataset, batch_size=10,shuffle=True)
+    dataloader = DataLoader(train_dataset, batch_size=150,shuffle=True,num_workers=20)
 
     train_loss_vec=[]
     try:
         for i in range(epochs_num):
-            print("EPOCH NUMBER "+str(i))
             mean_loss=0
+            print("EPOCH NUMBER "+str(i))
+            startTime = time.time()
             for i_batch, sample_batched in enumerate(dataloader): #Enumerate over the different batches in the dataset
+                print(i_batch)
+                print(time.time()-startTime)
+                startTime=time.time()
                 batch_length=sample_batched[1].size(0)
                 optimizer.zero_grad()
 
-                data_in=Variable(sample_batched[0][:,:,:-1],requires_grad=False)
-                data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False)
+                data_in=Variable(sample_batched[0][:,:,:-1],requires_grad=False).cuda()
+                data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False).cuda()
                 out = seq.fwd_test(data_in)
                 mask= (data_ref == data_ref)
-
+                
+                print(time.time()-startTime)
+                startTime=time.time()
                 #Compute Loss, backpropagate and update the weights.
-                loss = criterion(data_ref[mask],out[0][:,:][mask],sample_batched[1].unsqueeze(1).double(),out[1])
+                loss = criterion(data_ref[mask],out[0][:,:][mask],sample_batched[1].unsqueeze(1).double().cuda(),out[1])
                 loss.backward()
                 optimizer.step()
 

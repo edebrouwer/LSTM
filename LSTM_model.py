@@ -28,16 +28,16 @@ class Sequence(nn.Module):
         batch_dim=data_in.size(0)
 
         outputs = []
-        h_t = torch.zeros(batch_dim, 51, dtype=torch.double)
-        c_t = torch.zeros(batch_dim, 51, dtype=torch.double)
-        h_t2 = torch.zeros(batch_dim, 51, dtype=torch.double)
-        c_t2 = torch.zeros(batch_dim, 51, dtype=torch.double)
+        h_t = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
+        c_t = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
+        h_t2 = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
+        c_t2 = torch.zeros(batch_dim, 51, dtype=torch.double).cuda()
 
         #For initialization. Should be modified to set output=0 in a more simple way.
         #h_t, c_t = self.lstm1(data_in[:,0].unsqueeze(1), (h_t, c_t))
         #h_t2, c_t2 = self.lstm2(h_t, (h_t2, c_t2))
 
-        output = torch.zeros([batch_dim,self.input_dim],dtype=torch.double)
+        output = torch.zeros([batch_dim,self.input_dim],dtype=torch.double).cuda()
         #print(output)
         for i, input_t in enumerate(torch.transpose(torch.transpose(data_in,2,0),1,2)): #Data is transposed so that input_t has the batch x dim format.
 
@@ -46,8 +46,13 @@ class Sequence(nn.Module):
 
             input_t=input_t.clone() #Seems needed for not having in_place operation.
             #input_t[nan_idx]=output[0,nan_idx]
+            #print("Input type is "+str(input_t.type()))
+            #print("Output type is "+str(output.type()))
             input_t[nan_mask]=output[nan_mask]
 
+            #print("Input type is "+str(input_t.type()))
+            #print("H type is "+str(h_t.type()))
+            #print("C type is "+str(c_t.type()))
             #h_t, c_t = self.lstm1(input_t.unsqueeze(0), (h_t, c_t))
             h_t, c_t = self.lstm1(input_t, (h_t, c_t))
             h_t2, c_t2 = self.lstm2(h_t, (h_t2, c_t2))
