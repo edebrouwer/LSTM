@@ -23,7 +23,8 @@ def main():
 
     #Set random seed
     np.random.seed(2)
-    train_dataset=LabTrainDataset()
+    train_dataset=LabTrainDataset(csv_file_serie="lab_short_pre_proc_train.csv")
+    val_dataset=LabTrainDataset(csv_file_serie="lab_short_pre_proc_val.csv")
     #With Adam optimizer
     seq=Sequence(input_dim=input_dim)
     seq.double()
@@ -35,6 +36,7 @@ def main():
     epochs_num=50
 
     dataloader = DataLoader(train_dataset, batch_size=500,shuffle=True,num_workers=20)
+    dataloader_val = DataLoader(val_dataset, batch_size=len(val_dataset),shuffle=True,num_workers=20)
 
     train_loss_vec=[]
     try:
@@ -63,6 +65,23 @@ def main():
             print("Loss : "+str(mean_loss/i_batch))
             print(time.time()-startTime)
             train_loss_vec.append(mean_loss.item()/i_batch)
+
+            with torch.no_grad(): #Validation samples.
+                for i_batch_val, sample_batched_val in enumerate(dataloader_val): #Enumerate over the different batches in the dataset
+                    #print(i_batch)
+                    #print(time.time()-startTime)
+
+                    data_in=Variable(sample_batched_val[0][:,:,:-1],requires_grad=False).cuda()
+                    data_ref=Variable(sample_batched_val[0][:,:,1:],requires_grad=False).cuda()
+                    out = seq.fwd_test(data_in)
+                    mask= (data_ref == data_ref)
+
+                    #Compute Loss, backpropagate and update the weights.
+                    loss = criterion(data_ref[mask],out[0][:,:][mask],sample_batched_val[1].unsqueeze(1).double().cuda(),out[1])
+                print("Validation Loss : "+str(loss))
+
+
+
     except KeyboardInterrupt:
         torch.save(seq.state_dict(),"current_model.pt")
         torch.save(train_loss_vec,"train_loss_history.pt")
