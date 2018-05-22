@@ -32,6 +32,7 @@ def testAUC_model(mod):
     test_dataset=LabTrainDataset(csv_file_serie="lab_short_pre_proc_test.csv")
     dataloader_test = DataLoader(test_dataset,batch_size=len(test_dataset),shuffle=True)
 
+    print(len(test_dataset))
     true_labs=np.zeros(len(test_dataset))
     inferred_labs=np.zeros(len(test_dataset))
     for i_batch, sample_batched in enumerate(dataloader_test): #Enumerate over the different batches in the dataset
@@ -39,7 +40,8 @@ def testAUC_model(mod):
         data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False).cuda()
         out = mod.fwd_test(data_in)
         true_labs=sample_batched[1].numpy()
-        inferred_labs=out[1].detach().numpy()
+        print(true_labs)
+        inferred_labs=out[1].cpu().detach().numpy()
 
     #Compute AUC.
     from sklearn.metrics import roc_auc_score
