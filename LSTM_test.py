@@ -12,6 +12,10 @@ from LSTM_model import Sequence, LabTrainDataset
 
 import sys
 
+import matplotlib
+matplotlib.use('agg')
+import matplotlib.pyplot as plt
+
 
 def main():
     # print command line arguments
@@ -40,7 +44,8 @@ def long_model(mod,idx=0):
         data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False).cuda()
         out = mod.fwd_test(data_in)
     print(data_ref.shape)
-
+    plt.plot(data_ref.cpu().detach().numpy()[idx,0,:])
+    plt.savefig("fig.pdf")
 
 
 def testAUC_model(mod):
