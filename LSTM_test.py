@@ -21,7 +21,7 @@ def main():
     print("AUC on test set: "+str(testAUC_model(seq)))
 
 def load_current_model(): #Function to load the saved model.
-    mod=Sequence(input_dim=2)
+    mod=Sequence(input_dim=30)
     mod.double()
     mod.cuda()
     mod.load_state_dict(torch.load("current_model.pt"))
