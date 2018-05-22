@@ -58,7 +58,7 @@ def main():
 
                 #Compute Loss, backpropagate and update the weights.
                 loss = criterion(data_ref[mask],out[0][:,:][mask],sample_batched[1].unsqueeze(1).double().cuda(),out[1])
-                print(loss)
+                #print(loss)
                 loss.backward()
                 optimizer.step()
 

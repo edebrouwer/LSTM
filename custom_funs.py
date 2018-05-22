@@ -28,4 +28,7 @@ class custom_loss(_Loss):
         loss_series=F.mse_loss(est_series, target_series, size_average=self.size_average, reduce=self.reduce)
         loss_label=F.binary_cross_entropy(est_label, target_label,size_average=self.size_average,reduce=self.reduce)
         total_loss=loss_series+self.lam*loss_label
+        print("SIZE AVERAGE = "+str(self.size_average))
+        print("Series LOSS"+str(loss_series))
+        print(loss_label)
         return total_loss
