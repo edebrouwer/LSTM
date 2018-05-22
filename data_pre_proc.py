@@ -4,7 +4,7 @@ import pandas as pd
 input_dim=29
 csv_file_serie="lab_events_short.csv"
 csv_file_tag="death_tags.csv"
-file_path="~/Documents/Data/Full_MIMIC/"
+file_path="~/Data/MIMIC/"
 lab_short=pd.read_csv(file_path+csv_file_serie)
 lab_short=lab_short.drop_duplicates(["LABEL_CODE","TIME_STAMP","HADM_ID"])
 death_tags=pd.read_csv(file_path+csv_file_tag)
