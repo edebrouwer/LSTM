@@ -25,3 +25,5 @@ for idx in range(length):
     a["LABEL_CODE"]=a.index
     df_final=pd.concat([df_final,a])
     #df_final.reset_index()
+
+df_final.to_csv("df_final.csv")
