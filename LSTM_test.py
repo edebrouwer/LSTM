@@ -38,8 +38,8 @@ def testAUC_model(mod):
         data_in=Variable(sample_batched[0][:,:,:-1],requires_grad=False).cuda()
         data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False).cuda()
         out = mod.fwd_test(data_in)
-        true_labs[i_batch]=sample_batched[1].item()
-        inferred_labs[i_batch]=out[1].item()
+        true_labs[i_batch]=sample_batched[1].numpy()
+        inferred_labs[i_batch]=out[1].numpy()
 
     #Compute AUC.
     from sklearn.metrics import roc_auc_score
