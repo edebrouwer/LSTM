@@ -88,10 +88,12 @@ def main():
     except KeyboardInterrupt:
         torch.save(seq.state_dict(),"current_model.pt")
         torch.save(train_loss_vec,"train_loss_history.pt")
+        torch.save(val_loss_vec,"val_loss_history.pt")
         raise
 
     torch.save(seq.state_dict(),"current_model.pt")
     torch.save(train_loss_vec,"train_loss_history.pt")
+    torch.save(val_loss_vec,"val_loss_history.pt")
 
     to_do=input("Press t to go for test set, or any other key to abort")
     if to_do=="t":
