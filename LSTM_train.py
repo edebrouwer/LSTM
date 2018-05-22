@@ -39,6 +39,7 @@ def main():
     dataloader_val = DataLoader(val_dataset, batch_size=len(val_dataset),shuffle=True,num_workers=20)
 
     train_loss_vec=[]
+    val_loss_vec=[]
     try:
         for i in range(epochs_num):
             mean_loss=0
@@ -62,9 +63,10 @@ def main():
                 optimizer.step()
 
                 mean_loss+=loss
-            print("Loss : "+str(mean_loss/i_batch))
+            print("Training Loss : "+str(mean_loss/i_batch))
             print(time.time()-startTime)
             train_loss_vec.append(mean_loss.item()/i_batch)
+
 
             with torch.no_grad(): #Validation samples.
                 for i_batch_val, sample_batched_val in enumerate(dataloader_val): #Enumerate over the different batches in the dataset
@@ -79,6 +81,7 @@ def main():
                     #Compute Loss, backpropagate and update the weights.
                     loss = criterion(data_ref[mask],out[0][:,:][mask],sample_batched_val[1].unsqueeze(1).double().cuda(),out[1])
                 print("Validation Loss : "+str(loss))
+                val_loss_vec.append(loss.item())
 
 
 
