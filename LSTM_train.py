@@ -95,32 +95,7 @@ def main():
     torch.save(train_loss_vec,"train_loss_history.pt")
     torch.save(val_loss_vec,"val_loss_history.pt")
 
-    to_do=input("Press t to go for test set, or any other key to abort")
-    if to_do=="t":
-        AUCtest=testAUC_model(seq)
-        print("AUC on test set is :"+str(AUCtest))
-    else:
-        return(0)
 
-
-def testAUC_model(mod):
-    test_dataset=LabTestsDataset(input_dim=2,csv_file_serie="dummy_data_test.csv",csv_file_tag="dummy_death_tags_test.csv",file_path="./")
-    dataloader_test = DataLoader(test_dataset,shuffle=True)
-
-    true_labs=np.zeros(len(test_dataset))
-    inferred_labs=np.zeros(len(test_dataset))
-    for i_batch, sample_batched in enumerate(dataloader_test): #Enumerate over the different batches in the dataset
-        data_in=Variable(sample_batched[0][:,:,:-1],requires_grad=False)
-        data_ref=Variable(sample_batched[0][:,:,1:],requires_grad=False)
-        out = mod.fwd_test(data_in)
-        true_labs[i_batch]=sample_batched[1].item()
-        inferred_labs[i_batch]=out[1].item()
-
-    #Compute AUC.
-    from sklearn.metrics import roc_auc_score
-    AUC_test=roc_auc_score(true_labs,inferred_labs)
-    #print("AUC on test samples "+str(AUC_test))
-    return(AUC_test)
 
 
 
