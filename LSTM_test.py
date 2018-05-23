@@ -46,6 +46,8 @@ def long_model(mod,idx=0):
     print(data_ref.shape)
     plt.plot(data_ref.cpu().detach().numpy()[idx,0,:])
     plt.savefig("fig.pdf")
+    torch.save(data_ref.cpu().detach().numpy(),"Data_ref.pt")
+    torch.save(out[0].cpu().detach().numpy(),"Data_out.pt")
 
 
 def testAUC_model(mod):
